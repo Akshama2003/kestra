@@ -108,7 +108,7 @@
     }
 
     const props = withDefaults(defineProps<{
-        value?: string | object | boolean | number;
+        value?: string | object | boolean | number | null;
         execution?: Execution;
         restrictUri?: boolean;
         /** Output key this value came from, used to name the download of a truncated value. */
@@ -125,7 +125,7 @@
     const humanSize = ref<string>("")
     const fileStatus = ref<"loading" | "available" | "missing">("loading")
 
-    const isFileValid = (value: unknown): boolean => {
+    const isFileValid = (value: unknown): value is string => {
         return Utils.isFile(value) && humanSize.value.length > 0 && humanSize.value !== "0B"
     }
 
@@ -241,7 +241,7 @@
 
             const data = await ExecutionsAPI.fileMetadatasFromExecution({
                 executionId: props.execution.id, 
-                path: props.value.toString(),
+                path: String(props.value),
             }, {
                 validateStatus: (status: number) => status === 200 || status === 404 || status === 422,
             })
